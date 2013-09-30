@@ -32,7 +32,7 @@ int systemCall(char *line){
 	if(newpid == 0){
 		execv(line, array);
 		printf("%s: not found\n", line);
-		return -1;
+		exit(-1);
 	}else{
 		waitpid(newpid, &exitcode,0);
 		printf("Command executed by pid=%d\n", newpid);
