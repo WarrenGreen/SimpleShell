@@ -8,11 +8,10 @@
 #include <unistd.h>
 #include "log.h"
 
-log_t *log = NULL;
+log_t *head = NULL;
 log_t *current = NULL;
 
 int systemCall(char *line){
-	int pid = getpid();
 	int exitcode;
 	char *delim = " ";
 	int count = 0;
@@ -32,6 +31,8 @@ int systemCall(char *line){
 	pid_t newpid = fork();
 	if(newpid == 0){
 		execv(line, array);
+		printf("%s: not found\n", line);
+		return -1;
 	}else{
 		waitpid(newpid, &exitcode,0);
 		printf("Command executed by pid=%d\n", newpid);
@@ -41,13 +42,13 @@ int systemCall(char *line){
 }
 
 void logAdd(char *line){
-	if(log==NULL){
-		log = malloc(sizeof(log_t));
+	if(head==NULL){
+		head = malloc(sizeof(log_t));
 		char *newCom = malloc(sizeof(line));
 		strcpy(newCom,line);
-		log->command = newCom;
-		log_init(log);
-		current = log;
+		head->command = newCom;
+		log_init(head);
+		current = head;
 	}else{
 		current = log_push(current,line);
 	}
@@ -77,10 +78,12 @@ void simple_shell(){
 		}else if (strncmp(line,"cd ", 3) ==0){
 			logAdd(line);
 			printf("Command executed by pid=%d\n", pid);
-			chdir(line+3);
+			
+			if((chdir(line+3)) == -1)
+				printf("%s: No such file or directory.\n", line+3);
 		}else if(strncmp(line,"!",1)==0){
 			if(strcmp(line,"!#")==0){
-				log_t *l = log;
+				log_t *l = head;
 				while(l!=NULL){
 					printf("%s\n", l->command);
 					l = l->next;
