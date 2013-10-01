@@ -114,5 +114,6 @@ void simple_shell(){
  */
 int main() {
 	simple_shell();
+	log_destroy(head);
     return 0;
 }

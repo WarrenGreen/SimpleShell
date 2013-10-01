@@ -33,6 +33,7 @@ void log_init(log_t *l) {
  */
 void log_destroy(log_t* l) {
 	while(l!=NULL){
+		free(l->command);
 		free(l);
 		l=l->next;
 	}
