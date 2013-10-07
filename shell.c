@@ -74,6 +74,7 @@ void simple_shell(){
 			logAdd(line);
 			printf("Command executed by pid=%d\n", pid);
 			free(line);
+			log_destroy(head);
 			exit(0);
 		}else if (strncmp(line,"cd ", 3) ==0){
 			logAdd(line);
